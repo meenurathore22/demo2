@@ -1,0 +1,459 @@
+// Run this code only after the full HTML page is loaded
+document.addEventListener('DOMContentLoaded', function () {
+
+  // Array containing all music track details
+  const tracksList = [
+    {
+      // Path of audio file
+      audioSrc:
+        './tracks/01-Wiz Khalifa - Amber Ice [Prod. By I.D. Labs Productions] [www.SongsLover.com].mp3',
+
+      // Image path of song cover
+      coverSrc: './images/wizKhalifa.jpg',
+
+      // Artist name
+      name: 'Wiz Khalifa',
+
+      // Song description/title
+      desc: 'Wiz Khalifa - Amber Ice',
+
+      // Unique ID of track
+      id: 0,
+    },
+
+    {
+      audioSrc:
+        './tracks/Martin Garrix & Tiësto - The Only Way Is Up (Official Music Video).mp3',
+      coverSrc: './images/martinG.jpg',
+      name: 'Martin Garrix',
+      desc: 'Ft. Tiesto Only Way Is Up',
+      id: 1,
+    },
+
+    {
+      audioSrc: './tracks/Space Buddha - Self Therapy.mp3',
+      coverSrc: './images/spaceBuddha.jpg',
+      name: 'Space Buddha',
+      desc: 'Self Therapy',
+      id: 2,
+    },
+
+    {
+      audioSrc: "./tracks/Drake - God's Plan.mp3",
+      coverSrc: './images/godsplan.jpg',
+      name: 'Drake',
+      desc: "God's plan",
+      id: 3,
+    },
+
+    {
+      audioSrc: './tracks/Joyner Lucas & Lil Baby - Ramen & OJ.mp3',
+      coverSrc: './images/ramenlucas.png',
+      name: 'Joyner Lucas & Lil Baby',
+      desc: 'Ramen & OJ',
+      id: 4,
+    },
+
+    {
+      audioSrc:
+        './tracks/Pop Smoke - For The Night (Audio) ft. Lil Baby, DaBaby.mp3',
+      coverSrc: './images/popsmoke.jpg',
+      name: 'Pop Smoke ft. Lil Baby, DaBaby',
+      desc: 'For The Night',
+      id: 5,
+    },
+  ];
+
+  // Selecting current song title element
+  const currentTrackName = document.querySelector('header h3');
+
+  // Selecting current song description element
+  const currentTrackDesc = document.querySelector('header p');
+
+  // Selecting current song cover image
+  const currentTrackCover = document.querySelector('header img');
+
+  // Selecting audio element
+  const currentTrackAudio = document.querySelector('audio');
+
+  // Selecting play/pause button
+  const playPauseBtn = document.querySelector('.event-playPause');
+
+  // Selecting mute/unmute button
+  const muteUnmuteBtn = document.querySelector('.event-muteUnmute');
+
+  // Selecting next button
+  const playNextBtn = document.querySelector('.event-next');
+
+  // Selecting previous button
+  const playPrevBtn = document.querySelector('.event-prev');
+
+  // Selecting progress bar
+  const progress = document.querySelector('.slider-progress');
+
+  // Selecting current playing time
+  const currentTrackTime = document.querySelector('.count-current');
+
+  // Selecting total duration time
+  const finalTrackTime = document.querySelector('.count-final');
+
+
+
+  // =========================
+  // ADD TRACKS INTO PLAYLIST
+  // =========================
+
+  // IIFE (Immediately Invoked Function Expression)
+  // Runs automatically when page loads
+  (function addMyTracksList() {
+
+    // Loop through all tracks
+    for (let track of tracksList) {
+
+      // Create new li element
+      var li = document.createElement('li');
+
+      // Set li id equal to track id
+      li.id = track.id;
+
+      // Add HTML content inside li
+      li.innerHTML = `
+                    <div class="track-number">0${track.id}</div>
+
+                    <!-- Song Cover Image -->
+                    <img
+                    src=${track.coverSrc}
+                    class="track-img"
+                    alt=""
+                    />
+
+                    <!-- Song Details -->
+                    <div class="track-detail">
+
+                    <!-- Artist Name -->
+                    <div class="track-detail_name">${track.name}</div>
+
+                    <!-- Song Description -->
+                    <div class="track-detail_desc">
+                        <small>${track.desc}</small>
+                    </div>
+
+                    </div>
+        `;
+
+      // Append li into ul playlist
+      document.querySelector('ul').appendChild(li);
+
+      // Create private scope for id
+      (function (id) {
+
+        // Add click event on each song
+        li.addEventListener(
+          'click',
+
+          // Play selected track when clicked
+          () => {
+            playSelectedTrack(id);
+          },
+
+          false
+        );
+
+      })(track.id);
+    }
+  })();
+
+
+
+  // Current song ID
+  let trackId = 0;
+
+
+
+  // =========================
+  // LOAD TRACK FUNCTION
+  // =========================
+
+  // Function to load song details
+  const loadTrack = (songId) => {
+
+    // Find selected song object from array
+    const song = tracksList.find((track) => track.id === songId);
+
+    // Destructuring object values
+    const { audioSrc, coverSrc, name, desc } = song;
+
+    // Set song title
+    currentTrackName.innerText = name;
+
+    // Set song description
+    currentTrackDesc.innerText = desc;
+
+    // Set audio source
+    currentTrackAudio.src = audioSrc;
+
+    // Set cover image
+    currentTrackCover.src = coverSrc;
+  };
+
+
+
+  // =========================
+  // PLAY SELECTED TRACK
+  // =========================
+
+  const playSelectedTrack = (songId) => {
+
+    // Update current track id
+    trackId = songId;
+
+    // Load selected song
+    loadTrack(songId);
+
+    // Play song
+    playTrack();
+  };
+
+
+
+  // Load first song initially
+  loadTrack(trackId);
+
+
+
+  // =========================
+  // PLAY TRACK
+  // =========================
+
+  const playTrack = () => {
+
+    // Remove play icon
+    playPauseBtn.classList.remove('fa-play');
+
+    // Add pause icon
+    playPauseBtn.classList.add('fa-pause');
+
+    // Play audio
+    currentTrackAudio.play();
+  };
+
+
+
+  // =========================
+  // PAUSE TRACK
+  // =========================
+
+  const pauseTrack = () => {
+
+    // Remove pause icon
+    playPauseBtn.classList.remove('fa-pause');
+
+    // Add play icon
+    playPauseBtn.classList.add('fa-play');
+
+    // Pause audio
+    currentTrackAudio.pause();
+  };
+
+
+
+  // =========================
+  // PREVIOUS TRACK
+  // =========================
+
+  const playPrevTrack = () => {
+
+    // Decrease track id
+    trackId--;
+
+    // If current id becomes less than 0
+    if (trackId < 0) {
+
+      // Move to last song
+      trackId = tracksList.length - 1;
+    }
+
+    // Load previous song
+    loadTrack(trackId);
+
+    // Play previous song
+    playTrack();
+  };
+
+
+
+  // =========================
+  // NEXT TRACK
+  // =========================
+
+  const playNextTrack = () => {
+
+    // Increase track id
+    trackId++;
+
+    // If id exceeds array length
+    if (trackId > tracksList.length - 1) {
+
+      // Start again from first song
+      trackId = 0;
+    }
+
+    // Load next song
+    loadTrack(trackId);
+
+    // Play next song
+    playTrack();
+  };
+
+
+
+  // =========================
+  // UPDATE PROGRESS BAR
+  // =========================
+
+  const updateProgress = () => {
+
+    // Current playing time
+    const currentTime = currentTrackAudio.currentTime;
+
+    // Total duration of song
+    const trackDuration = currentTrackAudio.duration;
+
+    // Calculate percentage of song completed
+    const percent = (currentTime / trackDuration) * 100;
+
+    // Update progress bar width
+    progress.style.width = percent + '%';
+
+
+
+    // Convert current time into minutes
+    let curMins = Math.floor(currentTime / 60);
+
+    // Convert current seconds
+    let curSecs = Math.floor(currentTime - curMins * 60);
+
+    // Convert duration minutes
+    let durMins = Math.floor(trackDuration / 60) || '--';
+
+    // Convert duration seconds
+    let durSecs = Math.floor(trackDuration - durMins * 60) || '--';
+
+
+
+    // Add leading zero if minutes less than 10
+    if (curMins < 10) {
+      curMins = `0${curMins}`;
+    }
+
+    // Add leading zero if seconds less than 10
+    if (curSecs < 10) {
+      curSecs = `0${curSecs}`;
+    }
+
+    // Add leading zero if duration minutes less than 10
+    if (durMins < 10) {
+      durMins = `0${durMins}`;
+    }
+
+    // Add leading zero if duration seconds less than 10
+    if (durSecs < 10) {
+      durSecs = `0${durSecs}`;
+    }
+
+
+
+    // Display current time
+    currentTrackTime.innerText = `${curMins}:${curSecs}`;
+
+    // Display total duration
+    finalTrackTime.innerText = `${durMins}:${durSecs}`;
+  };
+
+
+
+  // =========================
+  // MUTE / UNMUTE TRACK
+  // =========================
+
+  const muteUnmuteTrack = () => {
+
+    // Check if audio is muted
+    if (currentTrackAudio.muted) {
+
+      // Unmute audio
+      currentTrackAudio.muted = false;
+
+      // Change icon to volume up
+      muteUnmuteBtn.classList.remove('fa-volume-mute');
+      muteUnmuteBtn.classList.add('fa-volume-up');
+
+    } else {
+
+      // Mute audio
+      currentTrackAudio.muted = true;
+
+      // Change icon to mute icon
+      muteUnmuteBtn.classList.remove('fa-volume-up');
+      muteUnmuteBtn.classList.add('fa-volume-mute');
+    }
+  };
+
+
+
+  // =========================
+  // PLAY / PAUSE BUTTON EVENT
+  // =========================
+
+  playPauseBtn.addEventListener('click', () => {
+
+    // Check if currently playing
+    const currentlyPlaying =
+      playPauseBtn.classList.contains('fa-pause');
+
+    // If playing then pause otherwise play
+    currentlyPlaying ? pauseTrack() : playTrack();
+  });
+
+
+
+  // =========================
+  // MUTE BUTTON EVENT
+  // =========================
+
+  muteUnmuteBtn.addEventListener('click', () =>
+    muteUnmuteTrack()
+  );
+
+
+
+  // =========================
+  // PREVIOUS BUTTON EVENT
+  // =========================
+
+  playPrevBtn.addEventListener('click', () =>
+    playPrevTrack()
+  );
+
+
+
+  // =========================
+  // NEXT BUTTON EVENT
+  // =========================
+
+  playNextBtn.addEventListener('click', () =>
+    playNextTrack()
+  );
+
+
+
+  // =========================
+  // AUDIO TIME UPDATE EVENT
+  // =========================
+
+  // Runs continuously while audio plays
+  currentTrackAudio.addEventListener('timeupdate', () =>
+    updateProgress()
+  );
+
+});
